@@ -1,0 +1,119 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  password   String
+  businesses Business[]
+  role       Role       @default(USER)
+
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  deletedAt  DateTime?
+}
+
+model Business {
+  id           Int                   @id @default(autoincrement())
+  userId       Int
+  name         String                @unique
+  user         User                  @relation(fields: [userId], references: [id])
+  distributors BusinessDistributor[]
+  invoices     Invoice[]
+
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  deletedAt    DateTime?
+}
+
+model Distributor {
+  id           Int                   @id @default(autoincrement())
+  name         String
+  paymentTerms Int
+  businesses   BusinessDistributor[]
+  products     Product[]
+  invoices     Invoice[]
+
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  deletedAt    DateTime?
+}
+
+model BusinessDistributor {
+  business      Business    @relation(fields: [businessId], references: [id])
+  businessId    Int
+  distributor   Distributor @relation(fields: [distributorId], references: [id])
+  distributorId Int
+
+  @@id([businessId, distributorId])
+  @@unique([businessId, distributorId])
+}
+
+model Product {
+  id            Int           @id @default(autoincrement())
+  distributorId Int
+  name          String
+  price         Decimal
+  distributor   Distributor   @relation(fields: [distributorId], references: [id])
+  invoiceItem   InvoiceItem[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+}
+
+model Invoice {
+  id            Int           @id @default(autoincrement())
+  businessId    Int
+  distributorId Int
+  status        InvoiceStatus @default(UNPAID)
+  dueBy         DateTime
+  items         InvoiceItem[]
+  business      Business      @relation(fields: [businessId], references: [id])
+  distributor   Distributor   @relation(fields: [distributorId], references: [id])
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+}
+
+model InvoiceItem {
+  id        Int       @id @default(autoincrement())
+  invoiceId Int
+  productId Int
+  price     Decimal
+  quantity  Int
+  invoice   Invoice   @relation(fields: [invoiceId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+enum InvoiceStatus {
+  PAID
+  UNPAID
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+model SetupToken {
+  id    Int    @id @default(autoincrement())
+  token String @unique
+  email String @unique
+  used  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

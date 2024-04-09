@@ -1,0 +1,29 @@
+# Dependency directories
+node_modules/
+
+# Environment configuration
+.env
+
+# Build outputs
+dist/
+build/
+
+# Testing
+coverage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+
+# Temporary files
+*.log
+*.pid
+*.tmp
+*.swp
+
+# Ignore specific built files
+public/css/main.css
