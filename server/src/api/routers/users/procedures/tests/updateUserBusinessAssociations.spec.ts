@@ -7,15 +7,18 @@ import { updateUserBusinessAssociations } from '../updateUserBusinessAssociation
 describe('updateUserBusinessAssociations procedure', () => {
   beforeEach(() => {
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
   });
 
   it('successfully updates user business associations', async () => {
-    const updateUserBusinessAssociationsInput: UpdateUserBusinessAssociationsDto = {
-      userId: 2,
-      businessesToAdd: [3],
-      businessesToRemove: [1],
-    };
+    const updateUserBusinessAssociationsInput: UpdateUserBusinessAssociationsDto =
+      {
+        userId: 2,
+        businessesToAdd: [3],
+        businessesToRemove: [1],
+      };
 
     const mockUserWithBusinessesBefore = {
       id: updateUserBusinessAssociationsInput.userId,
@@ -24,7 +27,7 @@ describe('updateUserBusinessAssociations procedure', () => {
       role: Role.USER,
       businesses: [
         { id: 1, name: 'Business One' },
-        { id: 2, name: 'Business Two' }
+        { id: 2, name: 'Business Two' },
       ],
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -35,7 +38,7 @@ describe('updateUserBusinessAssociations procedure', () => {
       ...mockUserWithBusinessesBefore,
       businesses: [
         { id: 2, name: 'Business Two' },
-        { id: 3, name: 'Business Three' }
+        { id: 3, name: 'Business Three' },
       ],
     };
 
@@ -45,7 +48,10 @@ describe('updateUserBusinessAssociations procedure', () => {
     testdb.user.update.mockResolvedValueOnce(mockUserWithBusinessesAfter);
     testdb.user.findUnique.mockResolvedValueOnce(mockUserWithBusinessesAfter);
 
-    const result = await updateUserBusinessAssociations(updateUserBusinessAssociationsInput, mockCtx);
+    const result = await updateUserBusinessAssociations(
+      updateUserBusinessAssociationsInput,
+      mockCtx
+    );
 
     expect(result).toMatchObject({
       id: updateUserBusinessAssociationsInput.userId,
@@ -64,12 +70,12 @@ describe('updateUserBusinessAssociations procedure', () => {
 
     testdb.user.findUnique.mockResolvedValueOnce(null);
 
-    await expect(updateUserBusinessAssociations(input, mockCtx))
-      .rejects
-      .toMatchObject({
-        code: 'NOT_FOUND',
-        message: 'User not found',
-      });
+    await expect(
+      updateUserBusinessAssociations(input, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'User not found',
+    });
   });
 
   it('throws NOT_FOUND error when one or more businesses to add do not exist', async () => {
@@ -93,41 +99,40 @@ describe('updateUserBusinessAssociations procedure', () => {
     testdb.user.findUnique.mockResolvedValueOnce(mockUserWithBusinesses);
     testdb.business.count.mockResolvedValueOnce(0);
 
-    await expect(updateUserBusinessAssociations(input, mockCtx))
-      .rejects
-      .toMatchObject({
-        code: 'NOT_FOUND',
-        message: 'One or more businesses to add not found',
-      });
+    await expect(
+      updateUserBusinessAssociations(input, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'One or more businesses to add not found',
+    });
   });
 
   it('throws NOT_FOUND error when one or more businesses to remove are not associated with the user', async () => {
-  const input: UpdateUserBusinessAssociationsDto = {
-    userId: 2,
-    businessesToAdd: [],
-    businessesToRemove: [99],
-  };
+    const input: UpdateUserBusinessAssociationsDto = {
+      userId: 2,
+      businessesToAdd: [],
+      businessesToRemove: [99],
+    };
 
-  const mockUserWithBusinesses = {
-    id: input.userId,
-    email: 'user2@example.com',
-    password: 'password123',
-    role: Role.USER,
-    businesses: [
-      { id: 1, name: 'Business One' },
-    ],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deletedAt: null,
-  };
+    const mockUserWithBusinesses = {
+      id: input.userId,
+      email: 'user2@example.com',
+      password: 'password123',
+      role: Role.USER,
+      businesses: [{ id: 1, name: 'Business One' }],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+    };
 
-  testdb.user.findUnique.mockResolvedValueOnce(mockUserWithBusinesses);
+    testdb.user.findUnique.mockResolvedValueOnce(mockUserWithBusinesses);
 
-  await expect(updateUserBusinessAssociations(input, mockCtx))
-    .rejects
-    .toMatchObject({
+    await expect(
+      updateUserBusinessAssociations(input, mockCtx)
+    ).rejects.toMatchObject({
       code: 'NOT_FOUND',
-      message: 'One or more businesses to remove not found in user\'s current associations',
+      message:
+        "One or more businesses to remove not found in user's current associations",
     });
   });
 
@@ -140,8 +145,13 @@ describe('updateUserBusinessAssociations procedure', () => {
 
     testdb.user.findUnique.mockRejectedValue(new Error('Unexpected error'));
 
-    await expect(updateUserBusinessAssociations(updateUserInput, mockCtx))
-      .rejects
-      .toThrowError(new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Unexpected error' }));
+    await expect(
+      updateUserBusinessAssociations(updateUserInput, mockCtx)
+    ).rejects.toThrowError(
+      new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Unexpected error',
+      })
+    );
   });
 });

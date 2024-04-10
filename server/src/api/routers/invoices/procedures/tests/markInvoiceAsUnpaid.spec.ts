@@ -5,7 +5,9 @@ import { markInvoiceAsUnpaid } from '../markInvoiceAsUnpaid';
 
 describe('markInvoiceAsUnpaid procedure', () => {
   beforeEach(() => {
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
   });
 
@@ -27,7 +29,10 @@ describe('markInvoiceAsUnpaid procedure', () => {
     };
 
     testdb.invoice.findUnique.mockResolvedValue(mockInvoice);
-    testdb.invoice.update.mockResolvedValue({ ...mockInvoice, status: 'UNPAID' });
+    testdb.invoice.update.mockResolvedValue({
+      ...mockInvoice,
+      status: 'UNPAID',
+    });
 
     const result = await markInvoiceAsUnpaid(updateInvoiceStatusInput, mockCtx);
 
@@ -57,9 +62,15 @@ describe('markInvoiceAsUnpaid procedure', () => {
 
     testdb.invoice.findUnique.mockResolvedValue(mockInvoiceAlreadyUnpaid);
 
-    await expect(markInvoiceAsUnpaid(updateInvoiceStatusInput, mockCtx))
-      .rejects
-      .toThrowError(new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Invoice is already marked as unpaid.' }));  });
+    await expect(
+      markInvoiceAsUnpaid(updateInvoiceStatusInput, mockCtx)
+    ).rejects.toThrowError(
+      new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Invoice is already marked as unpaid.',
+      })
+    );
+  });
 
   it('throws NOT_FOUND error when an invoice does not exist', async () => {
     const updateInvoiceStatusInput = {
@@ -69,8 +80,11 @@ describe('markInvoiceAsUnpaid procedure', () => {
 
     testdb.invoice.findUnique.mockResolvedValue(null);
 
-    await expect(markInvoiceAsUnpaid(updateInvoiceStatusInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Invoice not found.' });
+    await expect(
+      markInvoiceAsUnpaid(updateInvoiceStatusInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Invoice not found.',
+    });
   });
 });

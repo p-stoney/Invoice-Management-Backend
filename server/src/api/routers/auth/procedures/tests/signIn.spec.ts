@@ -38,18 +38,23 @@ describe('signIn procedure', () => {
 
     const result = await signIn(signInInput, mockCtx);
 
-    expect(compare).toHaveBeenCalledWith(signInInput.password, mockUser.password);
+    expect(compare).toHaveBeenCalledWith(
+      signInInput.password,
+      mockUser.password
+    );
     expect(sign).toHaveBeenCalledWith(
       { id: mockUser.id, role: mockUser.role },
       authConfig.jwtSecret,
-      { expiresIn: authConfig.jwtExpiresIn },
+      { expiresIn: authConfig.jwtExpiresIn }
     );
-    expect(result).toEqual(expect.objectContaining({
-      id: mockUser.id,
-      email: mockUser.email,
-      role: mockUser.role,
-      accessToken: mockToken,
-    }));
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: mockUser.id,
+        email: mockUser.email,
+        role: mockUser.role,
+        accessToken: mockToken,
+      })
+    );
   });
 
   it('should throw UNAUTHORIZED error for incorrect password', async () => {
@@ -71,6 +76,9 @@ describe('signIn procedure', () => {
     (compare as vi.Mock).mockResolvedValue(false);
 
     await expect(signIn(signInInput, mockCtx)).rejects.toThrow(TRPCError);
-    await expect(signIn(signInInput, mockCtx)).rejects.toHaveProperty('code', 'UNAUTHORIZED');
+    await expect(signIn(signInInput, mockCtx)).rejects.toHaveProperty(
+      'code',
+      'UNAUTHORIZED'
+    );
   });
 });

@@ -3,7 +3,9 @@ import { deleteDistributor } from '../deleteDistributor';
 
 describe('deleteDistributor procedure', () => {
   beforeEach(() => {
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
   });
 
@@ -45,8 +47,11 @@ describe('deleteDistributor procedure', () => {
 
     testdb.distributor.findUnique.mockResolvedValue(null);
 
-    await expect(deleteDistributor(deleteDistributorInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Distributor not found.' });
+    await expect(
+      deleteDistributor(deleteDistributorInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Distributor not found.',
+    });
   });
 });

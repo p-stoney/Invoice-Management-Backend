@@ -5,6 +5,14 @@ import { authConfig } from '../../../../config/authConfig';
 import { Context } from '../../../../context';
 import { SignUpResult, SignInDto } from '../dtos';
 
+/**
+ * Authenticates a user by their email and password. If successful, generates a JWT token for session management.
+ *
+ * @param {SignInDto} input - User sign-in credentials including email and password.
+ * @param {Context} ctx - The application context, including database access and JWT configuration.
+ * @returns {Promise<SignUpResult>} The authenticated user's information and access token.
+ * @throws {TRPCError} If the email does not exist, the password is incorrect, or any other authorization error occurs.
+ */
 export const signIn = async (
   input: SignInDto,
   ctx: Context

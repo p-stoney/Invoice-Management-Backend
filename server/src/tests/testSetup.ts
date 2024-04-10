@@ -4,6 +4,11 @@ import { mockDeep, mockReset } from 'vitest-mock-extended';
 import { Logger } from 'winston';
 import { SessionUser } from '../utils/auth';
 
+/**
+ * Test setup for unit testing with vitest.
+ * Configures a mock Prisma client and resets it before each test to ensure test isolation.
+ * Provides a mock context for tests, including the mock database client, mock request, mock response, and a mock logger.
+ */
 export const testdb = mockDeep<PrismaClient>();
 
 beforeEach(() => {

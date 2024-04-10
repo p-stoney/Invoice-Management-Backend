@@ -3,7 +3,9 @@ import { updateDistributorDetails } from '../updateDistributorDetails';
 
 describe('updateDistributorDetails procedure', () => {
   beforeEach(() => {
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
   });
 
@@ -29,15 +31,20 @@ describe('updateDistributorDetails procedure', () => {
       paymentTerms: updateDistributorDetailsInput.paymentTerms,
     });
 
-    const result = await updateDistributorDetails(updateDistributorDetailsInput, mockCtx);
+    const result = await updateDistributorDetails(
+      updateDistributorDetailsInput,
+      mockCtx
+    );
 
-    expect(result).toEqual(expect.objectContaining({
-      id: expect.any(Number),
-      name: expect.any(String),
-      paymentTerms: updateDistributorDetailsInput.paymentTerms,
-      businesses: expect.any(Array),
-      products: expect.any(Array),
-    }));
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        name: expect.any(String),
+        paymentTerms: updateDistributorDetailsInput.paymentTerms,
+        businesses: expect.any(Array),
+        products: expect.any(Array),
+      })
+    );
     expect(testdb.distributor.update).toHaveBeenCalledWith({
       where: { id: updateDistributorDetailsInput.distributorId },
       data: { paymentTerms: updateDistributorDetailsInput.paymentTerms },
@@ -53,8 +60,11 @@ describe('updateDistributorDetails procedure', () => {
 
     testdb.distributor.findUnique.mockResolvedValue(null);
 
-    await expect(updateDistributorDetails(updateDistributorDetailsInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Distributor not found.' });
+    await expect(
+      updateDistributorDetails(updateDistributorDetailsInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Distributor not found.',
+    });
   });
 });

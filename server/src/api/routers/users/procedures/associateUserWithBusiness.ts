@@ -2,6 +2,14 @@ import { TRPCError } from '@trpc/server';
 import { Context } from '../../../../context';
 import { UserResponse, AssociateUserWithBusinessDto } from '../dtos';
 
+/**
+ * Associates one or more businesses with a user. Ensures all specified businesses exist before association.
+ *
+ * @param {AssociateUserWithBusinessDto} input - Contains the user ID and a list of business IDs for association.
+ * @param {Context} ctx - The request context, providing transactional database access.
+ * @returns {Promise<UserResponse>} The user's details after successful association with businesses.
+ * @throws {TRPCError} with code 'NOT_FOUND' if the user or any of the specified businesses are not found.
+ */
 export const associateUserWithBusiness = async (
   input: AssociateUserWithBusinessDto,
   ctx: Context
@@ -27,14 +35,17 @@ export const associateUserWithBusiness = async (
     });
 
     if (businesses.length !== businessIds.length) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'One or more businesses not found' });
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'One or more businesses not found',
+      });
     }
 
     await transaction.user.update({
       where: { id: userId },
       data: {
         businesses: {
-          connect: businessIds.map(id => ({ id })),
+          connect: businessIds.map((id) => ({ id })),
         },
       },
     });
@@ -45,7 +56,7 @@ export const associateUserWithBusiness = async (
     });
 
     if (!updatedUser) {
-      throw new Error("Unexpected error: Updated user could not be retrieved.");
+      throw new Error('Unexpected error: Updated user could not be retrieved.');
     }
 
     return {

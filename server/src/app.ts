@@ -1,5 +1,5 @@
 import express from 'express';
-import helmet from "helmet";
+import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
@@ -8,8 +8,10 @@ import { createContext } from './context';
 import { appRouter } from './api';
 
 /**
- * Creates and configures an Express application with tRPC routing.
- * Sets up middleware for JSON parsing, logging, CORS, and security headers.
+ * Initializes and configures an Express application with tRPC routing.
+ * Sets up middleware for security headers, CORS, JSON parsing, and logging.
+ *
+ * @returns {Express} The configured Express application.
  */
 export default function createApp() {
   const app = express();
@@ -18,10 +20,15 @@ export default function createApp() {
   app.use(cors());
   app.use(express.json());
 
-  app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
+  app.use(
+    morgan('combined', { stream: { write: (message) => logger.info(message) } })
+  );
 
   app.get('/health', (_, res) => res.sendStatus(200));
-  app.use('/v1/trpc', createExpressMiddleware({ router: appRouter, createContext }));
+  app.use(
+    '/v1/trpc',
+    createExpressMiddleware({ router: appRouter, createContext })
+  );
 
   return app;
 }

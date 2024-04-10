@@ -4,7 +4,9 @@ import { createProduct } from '../createProduct';
 
 describe('createProduct procedure', () => {
   beforeEach(() => {
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
   });
 
@@ -25,9 +27,9 @@ describe('createProduct procedure', () => {
     };
 
     const mockProduct = {
-        id: 1,
-        ...createProductInput,
-        price: new Prisma.Decimal(createProductInput.price),
+      id: 1,
+      ...createProductInput,
+      price: new Prisma.Decimal(createProductInput.price),
     };
 
     testdb.distributor.findUnique.mockResolvedValue(mockDistributor);
@@ -57,8 +59,11 @@ describe('createProduct procedure', () => {
 
     testdb.distributor.findUnique.mockResolvedValue(null);
 
-    await expect(createProduct(createProductInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Distributor not found.' });
+    await expect(
+      createProduct(createProductInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Distributor not found.',
+    });
   });
 });

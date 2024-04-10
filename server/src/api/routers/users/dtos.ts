@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import { User } from '@prisma/client';
 
+/**
+ * Defines data transfer objects (DTOs) and validation schemas for user-related operations.
+ * These DTOs are used for promoting and demoting users, associating users with businesses, and updating user associations,
+ * ensuring that input data adheres to expected formats and constraints.
+ *
+ * @module UserDTOs
+ */
 export type UserResponse = Omit<User, 'password'>;
 
 export const UserOperationInput = z.object({
@@ -20,6 +27,12 @@ export const UpdateUserAssociationsInput = z.object({
 
 export type PromoteUserDto = z.TypeOf<typeof UserOperationInput>;
 export type DemoteUserDto = z.TypeOf<typeof UserOperationInput>;
-export type AssociateUserWithBusinessDto = z.TypeOf<typeof UserAssociationInput>;
-export type RemoveUserBusinessAssociationsDto = z.TypeOf<typeof UserAssociationInput>;
-export type UpdateUserBusinessAssociationsDto = z.TypeOf<typeof UpdateUserAssociationsInput>;
+export type AssociateUserWithBusinessDto = z.TypeOf<
+  typeof UserAssociationInput
+>;
+export type RemoveUserBusinessAssociationsDto = z.TypeOf<
+  typeof UserAssociationInput
+>;
+export type UpdateUserBusinessAssociationsDto = z.TypeOf<
+  typeof UpdateUserAssociationsInput
+>;

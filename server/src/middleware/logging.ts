@@ -1,5 +1,13 @@
 import { BaseMiddlewareFunction } from '../context';
 
+/**
+ * Middleware to log the execution duration of procedures.
+ * Logs the time taken for a procedure to execute successfully, and logs any errors encountered during execution.
+ *
+ * @param {BaseMiddlewareFunction} ctx - The context of the request, including the logger.
+ * @param {Function} next - Function to proceed to the next middleware or procedure.
+ * @returns {Promise<any>} - The result of the procedure call.
+ */
 export const withLogging: BaseMiddlewareFunction = async ({ ctx, next }) => {
   const start = Date.now();
   try {

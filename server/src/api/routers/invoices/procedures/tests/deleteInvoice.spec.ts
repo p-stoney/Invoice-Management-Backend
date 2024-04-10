@@ -4,9 +4,11 @@ import { deleteInvoice } from '../deleteInvoice';
 
 describe('deleteInvoice procedure', () => {
   beforeEach(() => {
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
-  })
+  });
 
   it('successfully soft-deletes an invoice', async () => {
     const deleteInvoiceInput = {
@@ -14,18 +16,21 @@ describe('deleteInvoice procedure', () => {
     };
 
     const mockInvoice = {
-        id: deleteInvoiceInput.invoiceId,
-        businessId: 1,
-        distributorId: 1,
-        status: 'UNPAID' as InvoiceStatus,
-        dueBy: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
+      id: deleteInvoiceInput.invoiceId,
+      businessId: 1,
+      distributorId: 1,
+      status: 'UNPAID' as InvoiceStatus,
+      dueBy: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
     };
 
     testdb.invoice.findUnique.mockResolvedValue(mockInvoice);
-    testdb.invoice.update.mockResolvedValue({ ...mockInvoice, deletedAt: new Date() });
+    testdb.invoice.update.mockResolvedValue({
+      ...mockInvoice,
+      deletedAt: new Date(),
+    });
 
     const result = await deleteInvoice(deleteInvoiceInput, mockCtx);
 
@@ -47,8 +52,11 @@ describe('deleteInvoice procedure', () => {
 
     testdb.invoice.findUnique.mockResolvedValue(null);
 
-    await expect(deleteInvoice(deleteInvoiceInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Invoice not found.' });
+    await expect(
+      deleteInvoice(deleteInvoiceInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Invoice not found.',
+    });
   });
 });

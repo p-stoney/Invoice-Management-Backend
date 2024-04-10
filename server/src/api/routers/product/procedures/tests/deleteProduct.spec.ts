@@ -4,7 +4,9 @@ import { deleteProduct } from '../deleteProduct';
 
 describe('deleteProduct procedure', () => {
   beforeEach(() => {
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
   });
 
@@ -48,8 +50,11 @@ describe('deleteProduct procedure', () => {
 
     testdb.product.findUnique.mockResolvedValue(null);
 
-    await expect(deleteProduct(deleteProductInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Product not found.' });
+    await expect(
+      deleteProduct(deleteProductInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Product not found.',
+    });
   });
 });

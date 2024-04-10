@@ -8,8 +8,24 @@ describe('fetchProductPrices', () => {
   it('should return a map of product IDs to their prices', async () => {
     const productIds = [1, 2];
     const mockProducts = [
-      { id: 1, distributorId: 1, name: 'Product 1', price: new Prisma.Decimal(10), createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
-      { id: 2, distributorId: 2, name: 'Product 2', price: new Prisma.Decimal(20), createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
+      {
+        id: 1,
+        distributorId: 1,
+        name: 'Product 1',
+        price: new Prisma.Decimal(10),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      {
+        id: 2,
+        distributorId: 2,
+        name: 'Product 2',
+        price: new Prisma.Decimal(20),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
     ];
 
     testdb.product.findMany.mockResolvedValue(mockProducts);

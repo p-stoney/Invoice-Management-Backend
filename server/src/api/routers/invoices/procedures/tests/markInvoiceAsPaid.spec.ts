@@ -5,7 +5,9 @@ import { markInvoiceAsPaid } from '../markInvoiceAsPaid';
 
 describe('markInvoiceAsPaid procedure', () => {
   beforeEach(() => {
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
   });
 
@@ -16,14 +18,14 @@ describe('markInvoiceAsPaid procedure', () => {
     };
 
     const mockInvoice: Invoice = {
-        id: updateInvoiceStatusInput.invoiceId,
-        businessId: 0,
-        distributorId: 0,
-        status: InvoiceStatus.UNPAID,
-        dueBy: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
+      id: updateInvoiceStatusInput.invoiceId,
+      businessId: 0,
+      distributorId: 0,
+      status: InvoiceStatus.UNPAID,
+      dueBy: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
     };
 
     // Mock the findUnique method to return an unpaid invoice
@@ -48,21 +50,26 @@ describe('markInvoiceAsPaid procedure', () => {
     };
 
     const mockInvoiceAlreadyPaid: Invoice = {
-        id: updateInvoiceStatusInput.invoiceId,
-        businessId: 0,
-        distributorId: 0,
-        status: InvoiceStatus.PAID,
-        dueBy: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
+      id: updateInvoiceStatusInput.invoiceId,
+      businessId: 0,
+      distributorId: 0,
+      status: InvoiceStatus.PAID,
+      dueBy: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
     };
 
     testdb.invoice.findUnique.mockResolvedValue(mockInvoiceAlreadyPaid);
 
-    await expect(markInvoiceAsPaid(updateInvoiceStatusInput, mockCtx))
-      .rejects
-      .toThrowError(new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Invoice is already marked as paid.' }));
+    await expect(
+      markInvoiceAsPaid(updateInvoiceStatusInput, mockCtx)
+    ).rejects.toThrowError(
+      new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Invoice is already marked as paid.',
+      })
+    );
   });
 
   it('throws NOT_FOUND error when an invoice does not exist', async () => {
@@ -73,8 +80,11 @@ describe('markInvoiceAsPaid procedure', () => {
 
     testdb.invoice.findUnique.mockResolvedValue(null);
 
-    await expect(markInvoiceAsPaid(updateInvoiceStatusInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Invoice not found.' });
+    await expect(
+      markInvoiceAsPaid(updateInvoiceStatusInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Invoice not found.',
+    });
   });
 });

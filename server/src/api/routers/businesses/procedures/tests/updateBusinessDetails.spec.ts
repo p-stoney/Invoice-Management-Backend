@@ -4,7 +4,9 @@ import { updateBusinessDetails } from '../updateBusinessDetails';
 describe('updateBusinessDetails procedure', () => {
   beforeEach(() => {
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
   });
 
   it('successfully updates a business with new distributors', async () => {
@@ -26,18 +28,26 @@ describe('updateBusinessDetails procedure', () => {
     };
 
     testdb.business.findUnique.mockResolvedValue(mockBusiness);
-    testdb.businessDistributor.create.mockResolvedValue({ businessId: 1, distributorId: 2 });
+    testdb.businessDistributor.create.mockResolvedValue({
+      businessId: 1,
+      distributorId: 2,
+    });
     testdb.business.findUnique.mockResolvedValueOnce(mockBusiness);
 
     const result = await updateBusinessDetails(updateInput, mockCtx);
 
-    expect(result).toEqual(expect.objectContaining({
-      id: mockBusiness.id,
-      name: mockBusiness.name,
-      distributors: expect.arrayContaining([
-        expect.objectContaining({ id: expect.any(Number), name: expect.any(String) }),
-      ]),
-    }));
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: mockBusiness.id,
+        name: mockBusiness.name,
+        distributors: expect.arrayContaining([
+          expect.objectContaining({
+            id: expect.any(Number),
+            name: expect.any(String),
+          }),
+        ]),
+      })
+    );
   });
 
   it('throws NOT_FOUND error when the business does not exist', async () => {
@@ -48,8 +58,11 @@ describe('updateBusinessDetails procedure', () => {
 
     testdb.business.findUnique.mockResolvedValue(null); // Simulate business not found
 
-    await expect(updateBusinessDetails(updateBusinessDetailsInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'Business not found.' });
+    await expect(
+      updateBusinessDetails(updateBusinessDetailsInput, mockCtx)
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Business not found.',
+    });
   });
 });

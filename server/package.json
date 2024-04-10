@@ -5,10 +5,11 @@
     "main": "index.js",
     "scripts": {
         "start": "tsx src",
-        "format": "prettier --write \"src/**/*.ts\"",
         "dev": "tsx watch src",
-        "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
         "test": "vitest",
+        "seed": "tsx prisma/seed.ts",
+        "format": "prettier --write \"src/**/*.ts\"",
+        "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
         "coverage": "vitest run --coverage"
     },
     "keywords": [],

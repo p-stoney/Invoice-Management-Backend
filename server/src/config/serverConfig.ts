@@ -2,8 +2,13 @@ import 'dotenv/config';
 import { z } from 'zod';
 
 const serverConfigSchema = z.object({
-  environment: z.enum(['development', 'production', 'test']).default('development'),
-  port: z.preprocess((arg) => typeof arg === 'string' ? parseInt(arg, 10) : arg, z.number().default(3000)),
+  environment: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
+  port: z.preprocess(
+    (arg) => (typeof arg === 'string' ? parseInt(arg, 10) : arg),
+    z.number().default(3000)
+  ),
   prisma: z.object({
     log: z.array(z.enum(['query', 'info', 'warn', 'error'])).default(['error']),
   }),

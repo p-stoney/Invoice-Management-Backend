@@ -27,39 +27,46 @@ describe('createBusiness procedure', () => {
 
     const result = await createBusiness(createBusinessInput, mockCtx);
 
-    expect(result).toEqual(expect.objectContaining({
+    expect(result).toEqual(
+      expect.objectContaining({
         id: expect.any(Number),
         name: createBusinessInput.name,
         distributors: expect.any(Array),
         invoices: expect.any(Array),
-      }));
-      expect(testdb.business.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({
-          name: createBusinessInput.name,
-          userId: mockCtx.user!.id,
-        }),
-      });
+      })
+    );
+    expect(testdb.business.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        name: createBusinessInput.name,
+        userId: mockCtx.user!.id,
+      }),
     });
+  });
 
   it('throws CONFLICT error when a business with the same name exists', async () => {
     const createBusinessInput = {
       name: 'Existing Business',
     };
 
-    testdb.business.create.mockRejectedValue(new Prisma.PrismaClientKnownRequestError('P2002', {
-      code: 'P2002',
-      clientVersion: '1.0.0',
-      meta: {},
-      batchRequestIdx: 0,
-    }));
+    testdb.business.create.mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError('P2002', {
+        code: 'P2002',
+        clientVersion: '1.0.0',
+        meta: {},
+        batchRequestIdx: 0,
+      })
+    );
 
-    await expect(createBusiness(createBusinessInput, mockCtx))
-      .rejects
-      .toHaveProperty('code', 'CONFLICT');
+    await expect(
+      createBusiness(createBusinessInput, mockCtx)
+    ).rejects.toHaveProperty('code', 'CONFLICT');
 
-    await expect(createBusiness(createBusinessInput, mockCtx))
-      .rejects
-      .toHaveProperty('message', 'A business with this name already exists.');
+    await expect(
+      createBusiness(createBusinessInput, mockCtx)
+    ).rejects.toHaveProperty(
+      'message',
+      'A business with this name already exists.'
+    );
 
     expect(testdb.business.create).toHaveBeenCalledWith({
       data: {

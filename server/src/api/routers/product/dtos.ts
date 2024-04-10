@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+/**
+ * Defines data transfer objects (DTOs) and validation schemas for product-related operations.
+ * These DTOs are used for creating products, updating product details, and deleting products,
+ * ensuring that input data adheres to expected formats and constraints.
+ *
+ * @module ProductDTOs
+ */
 export const ProductResponseSchema = z.object({
   id: z.number(),
   distributorId: z.number(),
@@ -13,7 +20,9 @@ export const DeleteProductResponseSchema = z.object({
 });
 
 export type ProductResponse = z.TypeOf<typeof ProductResponseSchema>;
-export type DeleteProductResponse = z.TypeOf<typeof DeleteProductResponseSchema>;
+export type DeleteProductResponse = z.TypeOf<
+  typeof DeleteProductResponseSchema
+>;
 
 export const CreateProductInput = z.object({
   distributorId: z.number(),
@@ -31,5 +40,7 @@ export const DeleteProductInput = z.object({
 });
 
 export type CreateProductDto = z.TypeOf<typeof CreateProductInput>;
-export type UpdateProductDetailsDto = z.TypeOf<typeof UpdateProductDetailsInput>;
+export type UpdateProductDetailsDto = z.TypeOf<
+  typeof UpdateProductDetailsInput
+>;
 export type DeleteProductDto = z.TypeOf<typeof DeleteProductInput>;

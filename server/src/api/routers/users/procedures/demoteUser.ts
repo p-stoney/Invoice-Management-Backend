@@ -3,10 +3,21 @@ import { Role } from '@prisma/client';
 import { Context } from '../../../../context';
 import { UserResponse, DemoteUserDto } from '../dtos';
 
+/**
+ * Demotes a user from admin to a regular user role. SuperAdmin users cannot be demoted.
+ * Ensures the user exists and is not a SuperAdmin before demotion.
+ *
+ * @param {DemoteUserDto} input - Contains the user ID to be demoted.
+ * @param {Context} ctx - The request context, providing transactional database access.
+ * @returns {Promise<UserResponse>} The demoted user's details, including their new role.
+ * @throws {TRPCError} with code 'NOT_FOUND' if the user is not found.
+ * @throws {TRPCError} with code 'FORBIDDEN' if the user is a SuperAdmin, who cannot be demoted.
+ */
 export const demoteUser = async (
   input: DemoteUserDto,
   ctx: Context
-): Promise<UserResponse> => ctx.db.$transaction(async (transaction) => {
+): Promise<UserResponse> =>
+  ctx.db.$transaction(async (transaction) => {
     const user = await transaction.user.findUnique({
       where: {
         id: input.userId,
@@ -18,7 +29,10 @@ export const demoteUser = async (
       throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found.' });
     }
     if (user.role === Role.SUPERADMIN) {
-      throw new TRPCError({ code: 'FORBIDDEN', message: 'SuperAdmin users cannot be demoted.' });
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'SuperAdmin users cannot be demoted.',
+      });
     }
 
     await transaction.user.update({
@@ -31,7 +45,7 @@ export const demoteUser = async (
     });
 
     if (!updatedUser) {
-      throw new Error("Unexpected error: User not updated");
+      throw new Error('Unexpected error: User not updated');
     }
 
     return {
@@ -42,4 +56,4 @@ export const demoteUser = async (
       updatedAt: updatedUser.updatedAt,
       deletedAt: updatedUser.deletedAt,
     };
-});
+  });

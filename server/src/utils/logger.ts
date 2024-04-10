@@ -1,6 +1,11 @@
 import winston from 'winston';
 import { serverConfig } from '../config/serverConfig';
 
+/**
+ * Logger utility using Winston for logging application activities.
+ * Configures different logging transports based on the application environment.
+ * Logs are output to the console and written to file in the 'logs' directory.
+ */
 export const logger = winston.createLogger({
   level: serverConfig.isDevelopment ? 'debug' : 'info',
   format: winston.format.combine(

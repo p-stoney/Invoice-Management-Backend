@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+/**
+ * Defines data transfer objects (DTOs) and validation schemas for business-related operations.
+ * These DTOs are used for creating businesses, updating business distributors, and deleting businesses,
+ * ensuring that input data adheres to expected formats and constraints.
+ *
+ * @module BusinessDTOs
+ */
 export const BusinessResponseSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -13,7 +20,9 @@ export const DeleteBusinessResponseSchema = z.object({
 });
 
 export type BusinessResponse = z.TypeOf<typeof BusinessResponseSchema>;
-export type DeleteBusinessResponse = z.TypeOf<typeof DeleteBusinessResponseSchema>;
+export type DeleteBusinessResponse = z.TypeOf<
+  typeof DeleteBusinessResponseSchema
+>;
 
 export const CreateBusinessInput = z.object({
   name: z.string(),
@@ -29,5 +38,7 @@ export const DeleteBusinessInput = z.object({
 });
 
 export type CreateBusinessDto = z.TypeOf<typeof CreateBusinessInput>;
-export type UpdateBusinessDistributorsDto = z.TypeOf<typeof UpdateBusinessDistributorsInput>;
+export type UpdateBusinessDistributorsDto = z.TypeOf<
+  typeof UpdateBusinessDistributorsInput
+>;
 export type DeleteBusinessDto = z.TypeOf<typeof DeleteBusinessInput>;

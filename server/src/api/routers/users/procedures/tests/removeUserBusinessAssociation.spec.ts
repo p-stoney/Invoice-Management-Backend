@@ -7,7 +7,9 @@ import { removeUserBusinessAssociations } from '../removeUserBusinessAssociation
 describe('removeUserBusinessAssociations procedure', () => {
   beforeEach(() => {
     mockCtx.user = { id: 1, email: 'user@example.com', role: 'SUPERADMIN' };
-    testdb.$transaction.mockImplementation(async (transactionalQueries) => transactionalQueries(testdb));
+    testdb.$transaction.mockImplementation(async (transactionalQueries) =>
+      transactionalQueries(testdb)
+    );
   });
 
   it('successfully removes business associations from a user', async () => {
@@ -23,7 +25,7 @@ describe('removeUserBusinessAssociations procedure', () => {
       role: Role.USER,
       businesses: [
         { id: 1, name: 'Business One' },
-        { id: 2, name: 'Business Two' }
+        { id: 2, name: 'Business Two' },
       ],
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -32,7 +34,10 @@ describe('removeUserBusinessAssociations procedure', () => {
 
     testdb.user.findUnique.mockResolvedValue(mockUserWithBusinesses);
 
-    const result = await removeUserBusinessAssociations(removeUserInput, mockCtx);
+    const result = await removeUserBusinessAssociations(
+      removeUserInput,
+      mockCtx
+    );
 
     expect(result).toMatchObject({
       id: removeUserInput.userId,
@@ -42,7 +47,9 @@ describe('removeUserBusinessAssociations procedure', () => {
     expect(testdb.user.update).toHaveBeenCalledWith({
       where: { id: removeUserInput.userId },
       data: {
-        businesses: { disconnect: removeUserInput.businessIds.map(id => ({ id })) },
+        businesses: {
+          disconnect: removeUserInput.businessIds.map((id) => ({ id })),
+        },
       },
     });
   });
@@ -51,17 +58,22 @@ describe('removeUserBusinessAssociations procedure', () => {
     const removeUserInput = { userId: 99, businessIds: [1, 2] };
     testdb.user.findUnique.mockResolvedValue(null);
 
-    await expect(removeUserBusinessAssociations(removeUserInput, mockCtx))
-      .rejects
-      .toMatchObject({ code: 'NOT_FOUND', message: 'User not found' });
+    await expect(
+      removeUserBusinessAssociations(removeUserInput, mockCtx)
+    ).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'User not found' });
   });
 
   it('handles unexpected errors correctly', async () => {
     const removeUserInput = { userId: 2, businessIds: [1, 2] };
     testdb.user.findUnique.mockRejectedValue(new Error('Unexpected error'));
 
-    await expect(removeUserBusinessAssociations(removeUserInput, mockCtx))
-      .rejects
-      .toThrowError(new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Unexpected error' }));
+    await expect(
+      removeUserBusinessAssociations(removeUserInput, mockCtx)
+    ).rejects.toThrowError(
+      new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Unexpected error',
+      })
+    );
   });
 });
